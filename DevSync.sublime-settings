@@ -1,0 +1,11 @@
+{
+    "pathMapping": [
+        {
+            "type": "remote",  // local or remote
+            "source": "C:/test",
+            "destination": "/home/user/test"
+        }
+    ],
+    "scpLocation": "/usr/bin/scp",
+    "bashScript": "null"
+}
