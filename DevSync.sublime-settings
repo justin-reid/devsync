@@ -2,10 +2,13 @@
     "pathMapping": [
         {
             "type": "remote",  // local or remote
-            "source": "C:/test",
-            "destination": "/home/user/test"
+            "serverAddress": "devServer.com",
+            "username": "u.name",
+            "password": "superSecretPassword",
+            "source": "C:/Users/me/workspace/project",
+            "destination": "/home/me/workspace/project"
         }
     ],
-    "scpLocation": "/usr/bin/scp",
-    "bashScript": "null"
+    "scpBinary": "C:/cygwin/bin/scp.exe",
+    "bashScript": "null" // gets called when the full-sync command is executed
 }
