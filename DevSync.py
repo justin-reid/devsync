@@ -10,19 +10,34 @@ class DevSyncCommand(sublime_plugin.EventListener):
         localPath = view.file_name();
         for pathMap in pathMaps:
             if (pathMap["source"] in localPath):
+                # replace the src path with dest path
+                destPath = localPath.replace(pathMap["source"], pathMap["destination"]);
+
+                # determine the path (without file name) of the destination
+                lastFolderIndex = destPath.rfind("/");
+                destFolder = destPath[0:lastFolderIndex];
+
+                osVariant = pathMap["destOS"];
+                mkdir = " mkdir ";
+                if (osVariant == 'linux'):
+                    mkdir = mkdir + "-p ";
+
                 if (pathMap["type"] == 'remote'):
-                    # then replace the src path with dest path
-                    remotePath = localPath.replace(pathMap["source"], pathMap["destination"]);
                     hostString = pathMap["username"] + "@" + pathMap["serverAddress"];
 
                     # attempt to create directories in case they do not exist already
-                    lastFolderIndex = remotePath.rfind("/");
-                    remoteFolder = remotePath[0:lastFolderIndex];
-                    os.system(settings.get('sshBinary') + " " + hostString + " \"mkdir -p " + remoteFolder + " && exit\"");
+                    os.system(settings.get('sshBinary') + " " + hostString + " \"" + mkdir + destFolder + " && exit\"");
 
                     # Sync file across
-                    command = settings.get('scpBinary') + " -Cr " + localPath + " " + hostString + ":" + remotePath;
+                    command = settings.get('scpBinary') + " -Cr " + localPath + " " + hostString + ":" + destPath;
                     os.system(command);
+                elif (pathMap["type"] == 'local'):
+                    # attempt to create directories in case they do not exist already
+                    os.system(mkdir + destFolder);
+
+                    # copy the file
+                    os.system("cp " + localPath + " " + destPath);
+
 
 
 class devLinkCommand(sublime_plugin.TextCommand):

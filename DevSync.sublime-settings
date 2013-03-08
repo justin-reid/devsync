@@ -2,11 +2,17 @@
     "pathMapping": [
         {
             "type": "remote",  // local or remote
-            "serverAddress": "devServer.com",
-            "username": "u.name",
-            "password": "superSecretPassword",
+            "destOS": "linux", //OS variant of the destination; windows, linux, or osx
+            "serverAddress": "devServer.com", // required for remote server
+            "username": "u.name", // required for remote server
             "source": "C:/Users/me/workspace/project",
             "destination": "/home/me/workspace/project"
+        },
+        {
+            "type": "local",  // local or remote
+            "destOS": "linux", //OS variant of the destination; windows, linux, or osx
+            "source": "/home/me/workspace/testProj",
+            "destination": "/home/me/workspace/testProjBackup"
         }
     ],
 
