@@ -9,8 +9,15 @@
             "destination": "/home/me/workspace/project"
         }
     ],
-    "scpBinary": "C:/cygwin/bin/scp.exe", // needed to push saved files across
-    "sshBinary": "C:/cygwin/bin/ssh.exe", // needed to recursifly create missing directories
-    "rsyncBinary": "C:/cygwin/bin/rsync.exe", // needed to perform a full project sync
-    "bashScript": "null" // gets called when the full-sync command is executed
+
+    // required binaries. you only need to change these if you do not have these commands in your
+    // path environment variable. If you do need to change them, enter the full path 
+    // (with extension if applicable) to the binary
+    "scpBinary": "scp", // needed to push saved files across
+    "sshBinary": "ssh", // needed to recursifly create missing directories
+    "rsyncBinary": "rsync", // needed to perform a full project sync
+
+    // This script will be called at the end of the "full sync" command
+    // in case your environment has any special configuration (symlinks etc..) 
+    "bashScript": "null"
 }

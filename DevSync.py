@@ -5,8 +5,6 @@ class DevSyncCommand(sublime_plugin.EventListener):
         settings = sublime.load_settings('DevSync.sublime-settings');
         pathMaps = settings.get('pathMapping');
 
-        
-
         # Get the current file path and determine if it is in
         # the user's pathMapping array
         localPath = view.file_name();
@@ -18,9 +16,9 @@ class DevSyncCommand(sublime_plugin.EventListener):
                     hostString = pathMap["username"] + "@" + pathMap["serverAddress"];
 
                     # attempt to create directories in case they do not exist already
-                    lastFolderIndex = rfind("/", remotePath);
+                    lastFolderIndex = remotePath.rfind("/");
                     remoteFolder = remotePath[0:lastFolderIndex];
-                    os.system(settings.get('sshBinary') + " " + hostString + "\"mkdir -p " + remoteFolder + " && exit\"");
+                    os.system(settings.get('sshBinary') + " " + hostString + " \"mkdir -p " + remoteFolder + " && exit\"");
 
                     # Sync file across
                     command = settings.get('scpBinary') + " -Cr " + localPath + " " + hostString + ":" + remotePath;
