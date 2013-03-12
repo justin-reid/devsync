@@ -5,8 +5,12 @@
             "destOS": "linux", //OS variant of the destination; windows, linux, or osx
             "serverAddress": "devServer.com", // required for remote server
             "username": "u.name", // required for remote server
-            "source": "C:/Users/me/workspace/project",
-            "destination": "/home/me/workspace/project"
+            "source": "C:\\Users\\me\\workspace\\project",
+            "cygwinSourcePath": "/cygdrive/c/Users/me/workspace/project", // support for cygwin ssh executable.
+            "destination": "/home/me/workspace/project",
+            // This script will be called at the end of the "full sync" command
+            // in case your environment has any special configuration (symlinks etc..) 
+            "bashScript": "null"
         },
         {
             "type": "local",  // local or remote
@@ -23,7 +27,4 @@
     "sshBinary": "ssh", // needed to recursifly create missing directories
     "rsyncBinary": "rsync", // needed to perform a full project sync
 
-    // This script will be called at the end of the "full sync" command
-    // in case your environment has any special configuration (symlinks etc..) 
-    "bashScript": "null"
 }

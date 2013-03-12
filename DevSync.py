@@ -15,47 +15,72 @@ class DevSyncCommand(sublime_plugin.EventListener):
 
                 # determine the path (without file name) of the destination
                 lastFolderIndex = destPath.rfind("/");
+                if (lastFolderIndex == -1):
+                    lastFolderIndex = destPath.rfind("\\")
                 destFolder = destPath[0:lastFolderIndex];
 
                 osVariant = pathMap["destOS"];
                 mkdir = " mkdir ";
                 if (osVariant == 'linux'):
                     mkdir = mkdir + "-p ";
+                    destPath = destPath.replace('\\', '/');
 
                 if (pathMap["type"] == 'remote'):
                     hostString = pathMap["username"] + "@" + pathMap["serverAddress"];
 
                     # attempt to create directories in case they do not exist already
-                    os.system(settings.get('sshBinary') + " " + hostString + " \"" + mkdir + destFolder + " && exit\"");
+                    subprocess.call(settings.get('sshBinary') + " " + hostString + " \"" + mkdir + destFolder + " && exit\"", shell=True);
+
+                    # cygwin executables cannot use windows paths. if the cygwinPath variable is set use that instead
+                    if ("cygwinSourcePath" in pathMap and pathMap["cygwinSourcePath"] != "null"):
+                        localPath = localPath.replace(pathMap["source"], pathMap["cygwinSourcePath"]);
+                        localPath = localPath.replace('\\', '/');
 
                     # Sync file across
                     command = settings.get('scpBinary') + " -Cr " + localPath + " " + hostString + ":" + destPath;
-                    os.system(command);
+                    subprocess.call(command, shell=True);
                 elif (pathMap["type"] == 'local'):
                     # attempt to create directories in case they do not exist already
-                    os.system(mkdir + destFolder);
+                    subprocess.call(mkdir + destFolder, shell=True);
 
                     # copy the file
-                    os.system("cp " + localPath + " " + destPath);
+                    subprocess.call("cp " + localPath + " " + destPath, shell=True);
 
 
-
-class devLinkCommand(sublime_plugin.TextCommand):
+class devSyncCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        workingPath = self.view.file_name()
-        zfIndex = workingPath.find("ZF")
-        if (zfIndex == -1):
-            zfIndex = workingPath.find("legacy");
-        branchStart = workingPath.rfind("/", 0, zfIndex-1)
-        workingPath = workingPath[branchStart:zfIndex]
-        workingPath = workingPath.strip("/")
+        settings = sublime.load_settings('DevSync.sublime-settings');
+        pathMaps = settings.get('pathMapping');
 
-        self.view.window().run_command("exec_link", {"branchName":workingPath})
+        # Get the current file path and determine if it is in
+        # the user's pathMapping array
+        localPath = self.view.file_name();
+        for pathMap in pathMaps:
+            if (pathMap["source"] in localPath):
+                source = pathMap["source"]
 
-class execLinkCommand(sublime_plugin.WindowCommand):
-    def run(self, branchName):
-        self.window.show_input_panel("Branch to activate:", branchName, self.on_done, None, None)
-        pass
+                # get the name of the project / the base folder
+                index = source.rfind("\\")
+                if (index == -1):
+                    index = source.rfind("/")
 
-    def on_done(self, text):
-        subprocess.call("sh /home/user/workspace/devLinkScript " + text, shell=True)
+                folderName = source[index:len(source)]
+                folderName = folderName.strip("\\")
+                folderName = folderName.strip("/")
+
+                # execute the bash script (if necessary)
+                if ("bashScript" in pathMap and pathMap["bashScript"] != "null"):
+                    command = "sh " + pathMap["bashScript"] + " " + folderName
+                    subprocess.call(command, shell=True)
+
+                if (pathMap["type"] == 'remote'):
+                    hostString = pathMap["username"] + "@" + pathMap["serverAddress"];
+
+                    source = pathMap["source"]
+
+                    # cygwin executables cannot use windows paths. if the cygwinPath variable is set use that instead
+                    if ("cygwinSourcePath" in pathMap and pathMap["cygwinSourcePath"] != "null"):
+                        source = pathMap["cygwinSourcePath"]
+
+                    command = settings.get('rsyncBinary') + " -avz -e " + settings.get('sshBinary') + " " + source + "/* " + hostString + ":" + pathMap["destination"];
+                    subprocess.call(command, shell=True);
