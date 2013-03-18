@@ -82,5 +82,5 @@ class devSyncCommand(sublime_plugin.TextCommand):
                     if ("cygwinSourcePath" in pathMap and pathMap["cygwinSourcePath"] != "null"):
                         source = pathMap["cygwinSourcePath"]
 
-                    command = settings.get('rsyncBinary') + " -avz -e " + settings.get('sshBinary') + " " + source + "/* " + hostString + ":" + pathMap["destination"];
+                    command = settings.get('rsyncBinary') + " --exclude-from=" + settings.get('rsyncExcludes') + " -avz -e " + settings.get('sshBinary') + " " + source + "/* " + hostString + ":" + pathMap["destination"];
                     subprocess.call(command, shell=True);
