@@ -45,6 +45,8 @@ class DevSyncCommand(sublime_plugin.EventListener):
 
                     # copy the file
                     subprocess.call("cp " + localPath + " " + destPath, shell=True);
+            else:
+                print("No source configured for this file.");
 
 
 class devSyncCommand(sublime_plugin.TextCommand):
@@ -84,3 +86,5 @@ class devSyncCommand(sublime_plugin.TextCommand):
 
                     command = settings.get('rsyncBinary') + " --exclude-from=" + settings.get('rsyncExcludes') + " -avz -e " + settings.get('sshBinary') + " " + source + "/* " + hostString + ":" + pathMap["destination"];
                     subprocess.call(command, shell=True);
+            else:
+                print("No source configured for this file.");
