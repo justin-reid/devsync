@@ -8,8 +8,11 @@ class DevSyncCommand(sublime_plugin.EventListener):
         # Get the current file path and determine if it is in
         # the user's pathMapping array
         localPath = view.file_name();
+        foundMap = None;
         for pathMap in pathMaps:
             if (pathMap["source"] in localPath):
+                print('Found sync mapping.');
+                foundMap = True;
                 # replace the src path with dest path
                 destPath = localPath.replace(pathMap["source"], pathMap["destination"]);
 
@@ -45,8 +48,8 @@ class DevSyncCommand(sublime_plugin.EventListener):
 
                     # copy the file
                     subprocess.call("cp " + localPath + " " + destPath, shell=True);
-            else:
-                print("No source configured for this file.");
+        if (foundMap == None):
+            print("No source configured for this file.");
 
 
 class devSyncCommand(sublime_plugin.TextCommand):
@@ -57,9 +60,12 @@ class devSyncCommand(sublime_plugin.TextCommand):
         # Get the current file path and determine if it is in
         # the user's pathMapping array
         localPath = self.view.file_name();
+        foundMap = None;
         for pathMap in pathMaps:
             if (pathMap["source"] in localPath):
                 source = pathMap["source"]
+                print('Found sync mapping.');
+                foundMap = True;
 
                 # get the name of the project / the base folder
                 index = source.rfind("\\")
@@ -72,7 +78,8 @@ class devSyncCommand(sublime_plugin.TextCommand):
 
                 # execute the bash script (if necessary)
                 if ("bashScript" in pathMap and pathMap["bashScript"] != "null"):
-                    command = "sh " + pathMap["bashScript"] + " " + folderName
+                    command = settings.get('bashBinary') + " \"" + pathMap["bashScript"] + " " + folderName +"\""
+                    print(command)
                     subprocess.call(command, shell=True)
 
                 if (pathMap["type"] == 'remote'):
@@ -85,6 +92,7 @@ class devSyncCommand(sublime_plugin.TextCommand):
                         source = pathMap["cygwinSourcePath"]
 
                     command = settings.get('rsyncBinary') + " --exclude-from=" + settings.get('rsyncExcludes') + " -avz -e " + settings.get('sshBinary') + " " + source + "/* " + hostString + ":" + pathMap["destination"];
+                    print(command)
                     subprocess.call(command, shell=True);
-            else:
-                print("No source configured for this file.");
+        if (foundMap == None):
+            print("No source configured for this file.");

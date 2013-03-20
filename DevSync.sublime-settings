@@ -26,5 +26,6 @@
     "scpBinary": "scp", // needed to push saved files across
     "sshBinary": "ssh", // needed to recursifly create missing directories
     "rsyncBinary": "rsync", // needed to perform a full project sync
-    "rsyncExcludes": "~/.rsync/exclude"
+    "bashBinary": "sh", // include any required arguments. 
+    "rsyncExcludes": "~/.rsync/exclude",
 }
