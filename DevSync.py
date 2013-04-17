@@ -78,7 +78,7 @@ class devSyncCommand(sublime_plugin.TextCommand):
 
                 # execute the bash script (if necessary)
                 if ("bashScript" in pathMap and pathMap["bashScript"] != "null"):
-                    command = settings.get('bashBinary') + " \"" + pathMap["bashScript"] + " " + folderName +"\""
+                    command = settings.get('bashBinary') + " \"" + pathMap["bashScript"] + "\"" + " " + folderName
                     print(command)
                     subprocess.call(command, shell=True)
 
