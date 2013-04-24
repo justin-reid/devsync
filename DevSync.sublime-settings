@@ -28,6 +28,6 @@
     "rsyncBinary": "rsync", // needed to perform a full project sync
     "bashBinary": "sh", // include any required arguments. 
     "rsyncExcludes": "~/.rsync/exclude",
-    "debugMode": true
+    "debugMode": false // if true, extra output will be printed to the console. (ctrl+`  to display the console)
 
 }
