@@ -4,6 +4,10 @@ class DevSyncCommand(sublime_plugin.EventListener):
     def on_post_save(self, view):
         settings = sublime.load_settings('DevSync.sublime-settings');
         pathMaps = settings.get('pathMapping');
+        debug = settings.get('debugMode');
+
+        if (debug):
+            print("==== Starting DevSync Debugging Ouput ====")
 
         # Get the current file path and determine if it is in
         # the user's pathMapping array
@@ -11,7 +15,8 @@ class DevSyncCommand(sublime_plugin.EventListener):
         foundMap = None;
         for pathMap in pathMaps:
             if (pathMap["source"] in localPath):
-                print('Found sync mapping.');
+                if (debug):
+                    print('Found sync mapping.');
                 foundMap = True;
                 # replace the src path with dest path
                 destPath = localPath.replace(pathMap["source"], pathMap["destination"]);
@@ -31,6 +36,9 @@ class DevSyncCommand(sublime_plugin.EventListener):
                 if (pathMap["type"] == 'remote'):
                     hostString = pathMap["username"] + "@" + pathMap["serverAddress"];
 
+                    if (debug):
+                        print("Creating Folders: " + settings.get('sshBinary') + " " + hostString + " \"" + mkdir + destFolder + " && exit\"")
+
                     # attempt to create directories in case they do not exist already
                     subprocess.call(settings.get('sshBinary') + " " + hostString + " \"" + mkdir + destFolder + " && exit\"", shell=True);
 
@@ -41,15 +49,21 @@ class DevSyncCommand(sublime_plugin.EventListener):
 
                     # Sync file across
                     command = settings.get('scpBinary') + " -Cr " + localPath + " " + hostString + ":" + destPath;
+                    if (debug):
+                        print("Executing scp command: " + command)
                     subprocess.call(command, shell=True);
+
                 elif (pathMap["type"] == 'local'):
                     # attempt to create directories in case they do not exist already
                     subprocess.call(mkdir + destFolder, shell=True);
 
                     # copy the file
                     subprocess.call("cp " + localPath + " " + destPath, shell=True);
-        if (foundMap == None):
+        if (foundMap == None and debug):
             print("No source configured for this file.");
+
+        if (debug):
+            print("==== Done DevSync Debugging Ouput ====")
 
 
 class devSyncCommand(sublime_plugin.TextCommand):
@@ -64,7 +78,8 @@ class devSyncCommand(sublime_plugin.TextCommand):
         for pathMap in pathMaps:
             if (pathMap["source"] in localPath):
                 source = pathMap["source"]
-                print('Found sync mapping.');
+                if (debug):
+                    print('Found sync mapping.');
                 foundMap = True;
 
                 # get the name of the project / the base folder
@@ -83,7 +98,8 @@ class devSyncCommand(sublime_plugin.TextCommand):
                     if (settings.get('bashBinary') == 'sh'):
                         command = settings.get('bashBinary') + " \"" + pathMap["bashScript"] + "\"" + " " + folderName
 
-                    print(command)
+                    if (debug):
+                        print("Executing Bash Script: " + command)
                     subprocess.call(command, shell=True)
 
                 if (pathMap["type"] == 'remote'):
@@ -96,7 +112,8 @@ class devSyncCommand(sublime_plugin.TextCommand):
                         source = pathMap["cygwinSourcePath"]
 
                     command = settings.get('rsyncBinary') + " --exclude-from=" + settings.get('rsyncExcludes') + " -avz -e " + settings.get('sshBinary') + " " + source + "/* " + hostString + ":" + pathMap["destination"];
-                    print(command)
+                    if (debug):
+                        print("Executing Rsync command: " + command)
                     subprocess.call(command, shell=True);
-        if (foundMap == None):
+        if (foundMap == None and debug):
             print("No source configured for this file.");
