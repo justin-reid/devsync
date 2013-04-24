@@ -24,10 +24,17 @@
     // path environment variable. If you do need to change them, enter the full path 
     // (with extension if applicable) to the binary
     "scpBinary": "scp", // needed to push saved files across
-    "sshBinary": "ssh", // needed to recursifly create missing directories
+    "sshBinary": "ssh", // needed to recursivly create missing directories
     "rsyncBinary": "rsync", // needed to perform a full project sync
-    "bashBinary": "sh", // include any required arguments. 
+    "bashBinary": "sh", // include any required arguments.
     "rsyncExcludes": "~/.rsync/exclude",
+
+    // Example config for windows \w cygwin
+    // "scpBinary": "C:\\cygwin\\bin\\scp.exe",
+    // "sshBinary": "C:\\cygwin\\bin\\ssh.exe",
+    // "rsyncBinary": "C:\\cygwin\\bin\\rsync.exe",
+    // "bashBinary": "C:\\cygwin\\bin\\bash.exe --login -i -c",
+
     "debugMode": false // if true, extra output will be printed to the console. (ctrl+`  to display the console)
 
 }
