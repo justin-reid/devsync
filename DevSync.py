@@ -1,80 +1,83 @@
-import sublime, sublime_plugin, subprocess, re, os
+import sublime
+import sublime_plugin
+import subprocess
+
 
 class DevSyncCommand(sublime_plugin.EventListener):
     def on_post_save(self, view):
-        settings = sublime.load_settings('DevSync.sublime-settings');
-        pathMaps = settings.get('pathMapping');
-        debug = settings.get('debugMode');
+        settings = sublime.load_settings('DevSync.sublime-settings')
+        pathMaps = settings.get('pathMapping')
+        debug = settings.get('debugMode')
 
         if (debug):
             print("==== Starting DevSync Debugging Ouput ====")
 
         # Get the current file path and determine if it is in
         # the user's pathMapping array
-        localPath = view.file_name();
-        foundMap = None;
+        localPath = view.file_name()
+        foundMap = None
         for pathMap in pathMaps:
             if (pathMap["source"] in localPath):
                 if (debug):
-                    print('Found sync mapping.');
-                foundMap = True;
+                    print('Found sync mapping.')
+                foundMap = True
                 # replace the src path with dest path
-                destPath = localPath.replace(pathMap["source"], pathMap["destination"]);
+                destPath = localPath.replace(pathMap["source"], pathMap["destination"])
 
                 # determine the path (without file name) of the destination
-                lastFolderIndex = destPath.rfind("/");
+                lastFolderIndex = destPath.rfind("/")
                 if (lastFolderIndex == -1):
                     lastFolderIndex = destPath.rfind("\\")
-                destFolder = destPath[0:lastFolderIndex];
+                destFolder = destPath[0:lastFolderIndex]
 
-                osVariant = pathMap["destOS"];
-                mkdir = " mkdir ";
+                osVariant = pathMap["destOS"]
+                mkdir = " mkdir "
                 if (osVariant == 'linux'):
-                    mkdir = mkdir + "-p ";
-                    destPath = destPath.replace('\\', '/');
+                    mkdir = mkdir + "-p "
+                    destPath = destPath.replace('\\', '/')
 
                 if (pathMap["type"] == 'remote'):
-                    hostString = pathMap["username"] + "@" + pathMap["serverAddress"];
+                    hostString = pathMap["username"] + "@" + pathMap["serverAddress"]
 
                     if (debug):
                         print("Creating Folders: " + settings.get('sshBinary') + " " + hostString + " \"" + mkdir + destFolder + " && exit\"")
 
                     # attempt to create directories in case they do not exist already
-                    command = settings.get('sshBinary') + " " + hostString + " \"" + mkdir + destFolder + " && exit\"";
+                    command = settings.get('sshBinary') + " " + hostString + " \"" + mkdir + destFolder + " && exit\""
                     try:
-                        subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True);
+                        subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
                     except subprocess.CalledProcessError as e:
                         sublime.error_message(str(e.output.decode("utf-8")))
 
                     # cygwin executables cannot use windows paths. if the cygwinPath variable is set use that instead
                     if ("cygwinSourcePath" in pathMap and pathMap["cygwinSourcePath"] != "null"):
-                        localPath = localPath.replace(pathMap["source"], pathMap["cygwinSourcePath"]);
-                        localPath = localPath.replace('\\', '/');
+                        localPath = localPath.replace(pathMap["source"], pathMap["cygwinSourcePath"])
+                        localPath = localPath.replace('\\', '/')
 
                     # Sync file across
-                    command = settings.get('scpBinary') + " -Cr " + localPath + " " + hostString + ":" + destPath;
+                    command = settings.get('scpBinary') + " -Cr " + localPath + " " + hostString + ":" + destPath
                     if (debug):
                         print("Executing scp command: " + command)
 
                     try:
-                        subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True);
+                        subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
                     except subprocess.CalledProcessError as e:
                         sublime.error_message(str(e.output.decode("utf-8")))
 
                 elif (pathMap["type"] == 'local'):
                     # attempt to create directories in case they do not exist already
                     try:
-                        subprocess.check_output(mkdir + destFolder, stderr=subprocess.STDOUT, shell=True);
+                        subprocess.check_output(mkdir + destFolder, stderr=subprocess.STDOUT, shell=True)
                     except subprocess.CalledProcessError as e:
                         sublime.error_message(str(e.output.decode("utf-8")))
 
                     # copy the file
                     try:
-                        subprocess.check_output("cp " + localPath + " " + destPath, stderr=subprocess.STDOUT, shell=True);
+                        subprocess.check_output("cp " + localPath + " " + destPath, stderr=subprocess.STDOUT, shell=True)
                     except subprocess.CalledProcessError as e:
                         sublime.error_message(str(e.output.decode("utf-8")))
-        if (foundMap == None and debug):
-            print("No source configured for this file.");
+        if (foundMap is None and debug):
+            print("No source configured for this file.")
 
         if (debug):
             print("==== Done DevSync Debugging Ouput ====")
@@ -82,23 +85,23 @@ class DevSyncCommand(sublime_plugin.EventListener):
 
 class devSyncCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        settings = sublime.load_settings('DevSync.sublime-settings');
-        pathMaps = settings.get('pathMapping');
-        debug = settings.get('debugMode');
+        settings = sublime.load_settings('DevSync.sublime-settings')
+        pathMaps = settings.get('pathMapping')
+        debug = settings.get('debugMode')
 
         if (debug):
             print("==== Starting DevSync Debugging Ouput ====")
 
         # Get the current file path and determine if it is in
         # the user's pathMapping array
-        localPath = self.view.file_name();
-        foundMap = None;
+        localPath = self.view.file_name()
+        foundMap = None
         for pathMap in pathMaps:
             if (pathMap["source"] in localPath):
                 source = pathMap["source"]
                 if (debug):
-                    print('Found sync mapping.');
-                foundMap = True;
+                    print('Found sync mapping.')
+                foundMap = True
 
                 # get the name of the project / the base folder
                 index = source.rfind("\\")
@@ -119,12 +122,12 @@ class devSyncCommand(sublime_plugin.TextCommand):
                     if (debug):
                         print("Executing Bash Script: " + command)
                     try:
-                        subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True);
+                        subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
                     except subprocess.CalledProcessError as e:
                         sublime.error_message(str(e.output.decode("utf-8")))
 
                 if (pathMap["type"] == 'remote'):
-                    hostString = pathMap["username"] + "@" + pathMap["serverAddress"];
+                    hostString = pathMap["username"] + "@" + pathMap["serverAddress"]
 
                     source = pathMap["source"]
 
@@ -132,16 +135,16 @@ class devSyncCommand(sublime_plugin.TextCommand):
                     if ("cygwinSourcePath" in pathMap and pathMap["cygwinSourcePath"] != "null"):
                         source = pathMap["cygwinSourcePath"]
 
-                    command = settings.get('rsyncBinary') + " --exclude-from=" + settings.get('rsyncExcludes') + " -avz -e " + settings.get('sshBinary') + " " + source + "/* " + hostString + ":" + pathMap["destination"];
+                    command = settings.get('rsyncBinary') + " --exclude-from=" + settings.get('rsyncExcludes') + " -avz --delete -e " + settings.get('sshBinary') + " " + source + "/* " + hostString + ":" + pathMap["destination"]
                     if (debug):
                         print("Executing Rsync command: " + command)
 
                     try:
-                        subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True);
+                        subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
                     except subprocess.CalledProcessError as e:
                         sublime.error_message(str(e.output.decode("utf-8")))
-        if (foundMap == None and debug):
-            print("No source configured for this file.");
+        if (foundMap is None and debug):
+            print("No source configured for this file.")
 
         if (debug):
             print("==== Done DevSync Debugging Ouput ====")
