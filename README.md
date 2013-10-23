@@ -9,7 +9,7 @@ Tested and verified working on Windows and Ubuntu, realistically it should work 
 The recommended method is by using Sublime Package Manager [See Here](http://wbond.net/sublime_packages/package_control/installation). Otherwise, you can clone the repository yourself. 
 
 * cd into your Sublime packages directory.
-* run: git clone https://wiggitywiener@bitbucket.org/wiggitywiener/devsync.git
+* run: git clone https://github.com/GentlemanJ/devsync.git
 
 
 ## Usage
