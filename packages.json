@@ -5,12 +5,12 @@
 			"name": "DevSync",
 			"description": "A Sublime Text 2/3 plugin to enable the syncing of local files to another location (remote or local).",
 			"author": "Justin Reid",
-			"homepage": "https://bitbucket.org/wiggitywiener/devsync",
+			"homepage": "https://github.com/GentlemanJ/devsync",
 			"platforms": {
 				"*": [
 					{
-						"version": "1.0.0",
-						"url": "https://bitbucket.org/wiggitywiener/devsync/get/1.0.0.zip"
+						"version": "1.1.0",
+						"url": "https://github.com/GentlemanJ/devsync/archive/1.1.0.zip"
 					}
 				]
 			}
