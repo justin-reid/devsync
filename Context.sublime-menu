@@ -1,5 +1,7 @@
 [
     {
+        "caption": "Project Sync: Perform Full Project Sync",
+        "mnemonic": "S",
         "command": "dev_sync"
     }
 ]

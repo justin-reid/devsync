@@ -1,0 +1,26 @@
+[
+    {
+        "id": "preferences",
+        "children":
+        [
+            {
+                "caption": "Package Settings",
+                "mnemonic": "P",
+                "id": "package-settings",
+                "children": [
+                    {
+                        "caption": "Project Sync",
+                        "mnemonic": "S",
+                        "children": [
+                            {
+                                "caption": "Settings",
+                                "command": "open_file",
+                                "args": {"file": "${packages}/devsync/DevSync.sublime-settings"}
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

@@ -1,6 +1,6 @@
 [
         {
-                "caption": "DevSync: Perform Full Project Sync",
+                "caption": "Project Sync: Perform Full Project Sync",
                 "command": "dev_sync"
         }
 ]
