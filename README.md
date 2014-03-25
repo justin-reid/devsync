@@ -13,7 +13,7 @@ The recommended method is by using Sublime Package Manager [See Here](http://wbo
 
 
 ## Usage
-There is a dev_sync command that will push your current project directory (as specified by the "source" path in the settings file) to the specified destination.  This is only required once per project, after that, the  individual files will transfered be on save. 
+There is a dev_sync command that will push your current project directory (as specified by the "source" path in the settings file) to the specified destination.  You can Run this by mapping a key-stroke (described below) or by right-clicking on a file and selecting 'Project Sync: Perform Full Project Sync'.  This is only required once per project, after that the individual files will transfered be on save. 
 
 ## Key Mapping
 There is only one command that is called via key-stroke, the dev_sync command.  
@@ -27,6 +27,7 @@ Add something like this to your keymap:
 ```
 
 ## Settings
+Settings Can be accessed through 'Preferences -> Package Settings -> Project Sync -> Settings'. 
 Work with the included template, it should be fairly self-explanatory (I hope). 
 
 
