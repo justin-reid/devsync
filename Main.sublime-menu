@@ -15,7 +15,7 @@
                             {
                                 "caption": "Settings",
                                 "command": "open_file",
-                                "args": {"file": "${packages}/devsync/DevSync.sublime-settings"}
+                                "args": {"file": "${packages}/User/DevSync.sublime-settings"}
                             }
                         ]
                     }
