@@ -1,0 +1,3 @@
+=== Version 1.2.0 ===
+ - Updated 'local' project syncing to actually work on Windows. Amazing right!?
+ - Added the ability to do a full project sync when using a 'local' backup.
