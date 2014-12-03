@@ -72,16 +72,18 @@ class DevSyncCommand(sublime_plugin.EventListener):
                         pass
 
                     copyCmd = 'cp'
+                    ovCmd = ''
                     if (osVariant == 'windows'):
+                        ovCmd = '/y'
                         copyCmd = 'copy';
 
 
                     if (debug):
-                        print("Executing copy command: " + copyCmd + " " + localPath + " " + destPath)
+                        print("Executing copy command: " + copyCmd + " " + localPath + " " + destPath + " " + ovCmd)
 
                     # copy the file
                     try:
-                        subprocess.check_output(copyCmd + " " + localPath + " " + destPath, stderr=subprocess.STDOUT, shell=True)
+                        subprocess.check_output(copyCmd + " " + localPath + " " + destPath + " " + ovCmd, stderr=subprocess.STDOUT, shell=True)
                     except subprocess.CalledProcessError as e:
                         sublime.error_message(str(e.output.decode("utf-8")))
         if (foundMap is None and debug):
