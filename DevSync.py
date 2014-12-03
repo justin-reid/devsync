@@ -69,11 +69,11 @@ class DevSyncCommand(sublime_plugin.EventListener):
                     try:
                         subprocess.check_output(mkdir + destFolder, stderr=subprocess.STDOUT, shell=True)
                     except subprocess.CalledProcessError as e:
-                        sublime.error_message(str(e.output.decode("utf-8")))
+                        # sublime.error_message(str(e.output.decode("utf-8")))
 
                     # copy the file
                     try:
-                        subprocess.check_output("cp " + localPath + " " + destPath, stderr=subprocess.STDOUT, shell=True)
+                        subprocess.check_output("scp " + localPath + " " + destPath, stderr=subprocess.STDOUT, shell=True)
                     except subprocess.CalledProcessError as e:
                         sublime.error_message(str(e.output.decode("utf-8")))
         if (foundMap is None and debug):
@@ -147,6 +147,21 @@ class devSyncCommand(sublime_plugin.TextCommand):
                         subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
                     except subprocess.CalledProcessError as e:
                         sublime.error_message(str(e.output.decode("utf-8")))
+
+                elif (pathMap["type"] == 'local'):
+                    source = pathMap["source"]
+
+                    # cygwin executables cannot use windows paths. if the cygwinPath variable is set use that instead
+                    if ("cygwinSourcePath" in pathMap and pathMap["cygwinSourcePath"] != "null"):
+                        source = pathMap["cygwinSourcePath"]
+
+                    # copy over the project directory and files. Delete the original directory first.
+                    try:
+                        command = settings.get('rsyncBinary') + " -avz " + source + "/. " + pathMap["destination"]
+                        subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
+                    except subprocess.CalledProcessError as e:
+                        sublime.error_message(str(e.output.decode("utf-8")))
+
         if (foundMap is None and debug):
             print("No source configured for this file.")
 
