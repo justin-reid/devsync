@@ -69,11 +69,19 @@ class DevSyncCommand(sublime_plugin.EventListener):
                     try:
                         subprocess.check_output(mkdir + destFolder, stderr=subprocess.STDOUT, shell=True)
                     except subprocess.CalledProcessError as e:
-                        # sublime.error_message(str(e.output.decode("utf-8")))
+                        pass
+
+                    copyCmd = 'cp'
+                    if (osVariant == 'windows'):
+                        copyCmd = 'copy';
+
+
+                    if (debug):
+                        print("Executing copy command: " + copyCmd + " " + localPath + " " + destPath)
 
                     # copy the file
                     try:
-                        subprocess.check_output("scp " + localPath + " " + destPath, stderr=subprocess.STDOUT, shell=True)
+                        subprocess.check_output(copyCmd + " " + localPath + " " + destPath, stderr=subprocess.STDOUT, shell=True)
                     except subprocess.CalledProcessError as e:
                         sublime.error_message(str(e.output.decode("utf-8")))
         if (foundMap is None and debug):
@@ -155,10 +163,16 @@ class devSyncCommand(sublime_plugin.TextCommand):
                     if ("cygwinSourcePath" in pathMap and pathMap["cygwinSourcePath"] != "null"):
                         source = pathMap["cygwinSourcePath"]
 
+                    copyCmd = 'cp -rfT'
+                    if (pathMap["destOS"] == 'windows'):
+                        copyCmd = 'copy /Y';
+
                     # copy over the project directory and files. Delete the original directory first.
                     try:
-                        command = settings.get('rsyncBinary') + " -avz " + source + "/. " + pathMap["destination"]
-                        subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
+                        if (debug):
+                            print("Executing copy command: " + copyCmd + " " + source + " " + pathMap["destination"])
+
+                        subprocess.check_output(copyCmd + " " + source + " " + pathMap["destination"], stderr=subprocess.STDOUT, shell=True)
                     except subprocess.CalledProcessError as e:
                         sublime.error_message(str(e.output.decode("utf-8")))
 
