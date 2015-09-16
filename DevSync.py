@@ -165,7 +165,7 @@ class devSyncCommand(sublime_plugin.TextCommand):
 
                     copyCmd = 'cp -rfT'
                     if (pathMap["destOS"] == 'windows'):
-                        copyCmd = 'copy /Y';
+                        copyCmd = 'xcopy /E /Y';
 
                     # copy over the project directory and files. Delete the original directory first.
                     try:
